@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlaylistController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +45,8 @@ user routes
 routes untuk admin, dimana terdapat middleware admin dan juga prefix awalan url "user"
 */
 Route::middleware(['user.api'])->prefix('user')->group(function () {
-    //
+    Route::post('create-playlist',[PlaylistController::class,'create_playlist']);
+    Route::get('playlist',[PlaylistController::class,'show_playlist']);
 
 });
 
