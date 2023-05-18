@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Playlist;
+use App\Models\User;
+use Firebase\JWT\Key;
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+// panggil library jwt 
+
 
 class PlaylistController extends Controller
 {
@@ -20,6 +26,14 @@ class PlaylistController extends Controller
             return messageError($validator->messages()->toArray());
         }
 
+        $user = User::find(Auth::id());
+        if (!$user) {
+            return response()->json([
+                'message' => 'User Tidak Ditemukan',
+                'status' => 404,
+            ],404);
+        }
+
         $thumbnail = $request->file('gambar');
         $filename = now()->timestamp."_".$request->gambar->getClientOriginalName();
         $thumbnail->move('uploads',$filename); 
@@ -30,7 +44,7 @@ class PlaylistController extends Controller
             'nama' => $playlistData['nama'],
             'gambar' => 'uploads/'.$filename,
             'status' => 'private',
-            'id_user' => $request->user()->id_user,
+            'id_user' => $user->id,
         ]);
 
         // Lakukan tindakan lain, seperti mengirimkan respons atau melakukan redirect
