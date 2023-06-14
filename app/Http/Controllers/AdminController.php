@@ -18,13 +18,45 @@ use App\Models\Album;
 use App\Models\User_Deleted;
 use App\Models\CreatorRequest;
 use Illuminate\Session\Store;
-
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 
 {
 
     //**************************************** D A S H B O A R D *****************************************//
+
+    public function loginPostDashboard(Request $request)
+    {
+        $val = $request->email;
+        $password = $request->password;
+
+        $cekMail = User::where('users_email',$val)->first();
+        // dd($cekMail);
+   
+
+        try {
+            if($cekMail != null){
+            
+                $credentials = ([
+                    'users_email' => $val,
+                    'users_password' => $password,
+                ]);
+
+                if (Auth::loginUsingId($cekMail->id)) {
+                        return redirect()->route('home');
+                }
+    
+            }elseif ($cekMail == null ){
+                return redirect()->back()->with(['success' => 'No Credentials']);
+            }
+        } catch (\Throwable $th) {
+        return response()->json($th->getMessage());
+            
+            //throw $th;
+        }
+     
+    }
 
     public function dashboard()
     {
